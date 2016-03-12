@@ -16,4 +16,4 @@
   
 - 联系方式
   
-  邮箱(mailto:life.app.hanfeng@hotmail.com)
+  [邮箱](mailto:life.app.hanfeng@hotmail.com)
