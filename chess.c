@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 /*
 ************************************
 */
@@ -57,6 +58,16 @@ int methodOfEndingMenu = 0;
 *函数区
 *************************************
 */
+
+/*
+*函数名 :   clearBuf
+*参数   :   无
+ *作用   :   清除缓冲区
+*/
+int clearBuf(void) {
+    while(getchar() != '\n' && getchar() != EOF) ;
+    return 0;
+}
 
 /*
 *函数名	:	creatPanel
@@ -125,7 +136,14 @@ int creatMenu(char menu[][512],int numOfChar,int method,char devider) {
 *作用	:	游戏结束后调用，重置变量
 */
 int exitGame(void) {
-
+	int i,j;
+	userInput = 1;
+	for(i = 0;i < (width - 2);i++) {
+		for(j = 0;j < (height - 2);i++) {
+			chessPlot[i][j] = 0;
+		}
+	}
+	clearBuf();
 	return 0;
 }
 
@@ -216,17 +234,47 @@ int isVictory(int numOfChess,int x,int y) {
 }
 
 /*
+*函数名 :   isPloted
+*参数   :   x   :   下棋的X坐标
+            y   :   下棋的Y坐标
+*作用   :   判断是否已经下棋，是返回1
+*/
+int isPloted(int x,int y) {
+    if(chessPlot[x][y] != 0) return 1;
+    else return 0;
+}
+
+/*
 *函数名	:	AIPlot
 *参数	:	x	:	用户下的X坐标
 			y	:	用户下的Y坐标
 *说明	:	电脑下棋，在用户棋子周围3格内下棋
 */
 int AIPlot(int x,int y) {
+	int cx,cy;
+	int i = 0;
 	if(AI != 0) return 0;
-	//srand(time(0));
-	
-	//isVictory();
-	return 0;
+	srand(time(0)+3131408/20);
+	//随机生成
+	do {
+		if(i >= 10) {
+			do {
+				cx = rand()%20+1;
+				cy = rand()%20+1;
+				if(i >= 350) {
+					printf("无棋可下，判定玩家胜\n");
+					return 0;
+				}
+			}while(isPloted(cx,cy) == 1);
+		}
+		if(x > 10) cx = x - rand()%3+1;
+		else cx = x + rand()%3+1;
+		if(y > 10) cy = y - rand()%3+1;
+		else cy = y + rand()%3+1;
+	}while(isPloted(cx,cy) == 1);
+	chessPlot[cx][cy] = 2;
+	chessPanel[cx+1][cy+1] = white;
+	return isVictory(2,cx,cy);
 }
 
 /*
@@ -244,27 +292,6 @@ int endGame(int isVictory) {
 	scanf("%d",&a);
 	if(a == 0) return 0;
 	else exit(0);
-}
-
-/*
-*函数名	:	isPloted
-*参数	:	x	:	下棋的X坐标
-			y	:	下棋的Y坐标
-*作用	:	判断是否已经下棋，是返回1
-*/
-int isPloted(int x,int y) {
-	if(chessPlot[x][y] != 0) return 1;
-	else return 0;
-}
-
-/*
-*函数名	:	clearBuf
-*参数	:	无
-*作用	:	清除缓冲区
-*/
-int clearBuf(void) {
-	while(getchar() != '\n' && getchar() != EOF) ;
-	return 0;
 }
 
 /*
