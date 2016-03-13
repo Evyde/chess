@@ -32,13 +32,14 @@ char* chessPanel[width][height];
 char* white = "○";
 char* black = "●";
 int chessPlot[width-2][height-2];
+int AI = 0;//默认开启AI
 
-char menuOfDebug[][512] = {"更改随机数方式","进行游戏","退出菜单"};
-int numOfDebugMenu = 3;
-int methodOfDebugMenu = 0;
 char menuOfStart[][512] = {"开始游戏","设定","帮助","关于","退出游戏"};
 int numOfStartMenu = 5;
 int methodOfStartMenu = 0;
+char menuOfSetting[][512] = {"开/关AI","返回主菜单"};
+int numOfSettingMenu = 2;
+int methodOfSettingMenu = 0;
 char menuOfGameHelp[][512] = {"这个帮助可以让你了解游戏规则及操作方法。","在游戏中，你需要输入形如(x,y)这样的坐标来确定下棋的位置","之后电脑会下棋，此时系统提示电脑下棋坐标","之后继续输入坐标直到胜利即可","胜利条件：五个棋在同一条直线上，且不被对方棋子阻挡","胜利后将会弹出菜单。","必须输入数字，否则后果未知，最轻导致程序无限循环！","0.返回主菜单"};
 int numOfGameHelpMenu = 9;
 int methodOfGameHelpMenu = 2;
@@ -221,19 +222,10 @@ int isVictory(int numOfChess,int x,int y) {
 *说明	:	电脑下棋，在用户棋子周围3格内下棋
 */
 int AIPlot(int x,int y) {
+	if(AI != 0) return 0;
 	//srand(time(0));
 	
-	return 0;
-}
-
-/*
-*函数名	:	debug
-*参数	:	无
-*作用	:	调试程序
-*/
-int debug(void) {
-	printf("开始调试\n");
-	creatMenu(menuOfDebug,numOfDebugMenu,methodOfDebugMenu,'.');
+	//isVictory();
 	return 0;
 }
 
@@ -266,6 +258,16 @@ int isPloted(int x,int y) {
 }
 
 /*
+*函数名	:	clearBuf
+*参数	:	无
+*作用	:	清除缓冲区
+*/
+int clearBuf(void) {
+	while(getchar() != '\n' && getchar() != EOF) ;
+	return 0;
+}
+
+/*
 *函数名	:	startGame
 *参数	:	无
 *作用	:	开始游戏，进行初始化，并应用程序逻辑
@@ -282,11 +284,13 @@ int startGame(void) {
 		printf("退出游戏请输入棋盘之外坐标即可\n");
 		printf("请输入坐标(格式：x,y)：\n");
 		scanf("%d,%d",&x,&y);
+		clearBuf();
 		system(cls);
 		if(x > (width - 2) || y > (height - 2)) {
 			system(cls);
 			printf("检测到数组越界，是否返回主菜单？[y/n]:");
 			scanf("%c",&i);
+			clearBuf();
 			system(cls);
 			if(i == 'y' || i == 'Y') {
 				exitGame();
@@ -299,8 +303,10 @@ int startGame(void) {
 			endGame(0);
 			return 0;
 		}
-		//AIPlot(x,y);
-		//isVictory(2);
+		if(AIPlot(x,y) == 1) {
+			endGame(1);
+			return 0;
+		}
 		chessPanel[x+1][y+1] = black;
 		
 	}
@@ -313,7 +319,13 @@ int startGame(void) {
 *作用	:	设置
 */
 int setting(void) {
-
+	int i = 0;
+	system(cls);
+	creatMenu(menuOfSetting,numOfSettingMenu,methodOfSettingMenu,'.');
+	scanf("%d",&i);
+	clearBuf();
+	if(i == 1) AI = -1;
+	else if(i == 0) return 0;
 	return 0;
 }
 
@@ -353,14 +365,10 @@ int about() {
 */
 int main(int argc,char *argv[]) {
 	int i,j;
-	if (strstr(argv[argc-1] , "Debug")) {
-		printf("调试模式！\n");
-		if(!debug()) {
-			printf("调试完毕！程序退出！\n");
-			return 0;
-		}else printf("调试失败！程序退出！\n");
-		return 0;
-	}else printf("游戏模式！\n");
+	if (strstr(argv[argc-1] , "AI=off")) {
+		printf("关闭AI\n");
+		AI = -1;
+	}else printf("AI处于开启状态！\n");
 	for(i = 0;i < (width - 2);i++) {
 		for(j = 0;j < (height - 2);j++) {
 			chessPlot[i][j] = 0;
@@ -369,6 +377,8 @@ int main(int argc,char *argv[]) {
 	while(1) {
 	system(cls);
 	creatMenu(menuOfStart,numOfStartMenu,methodOfStartMenu,'.');
+	if(AI != 0) printf("AI状态：[关闭]\n");
+	else printf("AI状态：[开启]\n");
 	scanf("%d",&userInput);
 	switch(userInput) {
 		case 1:{startGame();break;}
