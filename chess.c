@@ -157,7 +157,7 @@ int isVictory(int numOfChess,int x,int y) {
 		if(chessPlot[i][y] == chess) totalChess++;
 		else break;
 	}
-	if(totlaChess >= 5) return 1;
+	if(totalChess >= 5) return 1;
 	totalChess = 1;
 	//纵向
 	for(i = y-1;i > 0;i--) {
@@ -172,7 +172,46 @@ int isVictory(int numOfChess,int x,int y) {
 	totalChess = 1;
 	//左上到右下方向
 	//左上
-	for(i = )
+	i = x-1;
+	j = y-1;
+	for(;i > 0 && j > 0;) {
+		if(chessPlot[i][j] == chess) totalChess++;
+		else break;
+		i--;
+		j--;
+	}
+	//左下
+	i = x+1;
+	j = y+1;
+	for(;i < (width-2) && j < (height-2);) {
+		if(chessPlot[i][j] == chess) totalChess++;
+		else break;
+		i--;
+		j--;
+	}
+	if(totalChess >= 5) return 1;
+	totalChess = 1;
+	//右上到左下方向
+	//右上
+	i = x+1;
+	j = y-1;
+	for(;i < (width-2) && j > 0;) {
+		if(chessPlot[i][j] == chess) totalChess++;
+		else break;
+		i++;
+		j--;
+	}
+	//右下
+	i = x-1;
+	j = y+1;
+	for(;i > 0 && j < (height-2);) {
+		if(chessPlot[i][j] == chess) totalChess++;
+		else break;
+		i--;
+		j++;
+	}
+	if(totalChess >= 5) return 1;
+	else return 0;
 }
 
 /*
@@ -199,12 +238,40 @@ int debug(void) {
 }
 
 /*
+*函数名	:	endGame
+*参数	:	isVictory	:	表示玩家或者电脑胜利
+							0	:	代表玩家胜利
+							1	:	代表电脑胜利
+*作用	:	结束游戏后调用
+*/
+int endGame(int isVictory) {
+	int a=0;
+	system(cls);
+	if(isVictory == 0) printf("玩家获胜！\n0.返回主菜单\n1.退出游戏\n");
+	else printf("玩家失败！\n0.返回主菜单\n1.退出游戏\n");
+	scanf("%d",&a);
+	if(a == 0) return 0;
+	else exit(0);
+}
+
+/*
+*函数名	:	isPloted
+*参数	:	x	:	下棋的X坐标
+			y	:	下棋的Y坐标
+*作用	:	判断是否已经下棋，是返回1
+*/
+int isPloted(int x,int y) {
+	if(chessPlot[x][y] != 0) return 1;
+	else return 0;
+}
+
+/*
 *函数名	:	startGame
 *参数	:	无
 *作用	:	开始游戏，进行初始化，并应用程序逻辑
 */
 int startGame(void) {
-	int x = 9,y = 9,a = 0;
+	int x = 9,y = 9;
 	char i = 'n';
 	creatPanel();
 	system(cls);
@@ -218,18 +285,22 @@ int startGame(void) {
 		system(cls);
 		if(x > (width - 2) || y > (height - 2)) {
 			system(cls);
-			printf("检测到数组越界，是否退出游戏？[y/n]:");
+			printf("检测到数组越界，是否返回主菜单？[y/n]:");
 			scanf("%c",&i);
+			system(cls);
 			if(i == 'y' || i == 'Y') {
 				exitGame();
 				return 0;
 			}
 			else continue;
-		}else 
-		chessPlot[x][y] = 0;//0代表黑棋
-		isVictory(0);
-		AIPlot(x,y);
-		isVictory(1);
+		}else if(isPloted(x,y) == 1) continue;
+		chessPlot[x][y] = 1;//1代表黑棋
+		if(isVictory(1,x,y) == 1) {
+			endGame(0);
+			return 0;
+		}
+		//AIPlot(x,y);
+		//isVictory(2);
 		chessPanel[x+1][y+1] = black;
 		
 	}
@@ -281,6 +352,7 @@ int about() {
 *作用	:	程序入口
 */
 int main(int argc,char *argv[]) {
+	int i,j;
 	if (strstr(argv[argc-1] , "Debug")) {
 		printf("调试模式！\n");
 		if(!debug()) {
@@ -289,6 +361,11 @@ int main(int argc,char *argv[]) {
 		}else printf("调试失败！程序退出！\n");
 		return 0;
 	}else printf("游戏模式！\n");
+	for(i = 0;i < (width - 2);i++) {
+		for(j = 0;j < (height - 2);j++) {
+			chessPlot[i][j] = 0;
+		}
+	}
 	while(1) {
 	system(cls);
 	creatMenu(menuOfStart,numOfStartMenu,methodOfStartMenu,'.');
