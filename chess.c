@@ -10,12 +10,27 @@
 */
 
 /*
+*宏定义区
+************************************
+*/
+#define width 21
+#define height 21
+/*
+************************************
+*/
+
+/*
 *全局变量区
 *************************************
 */
 int userInput = 1;
 
-char* cls = "clear";
+char* cls = "clear";//Windows系统请将clear更改为cls
+
+char* chessPanel[width][height];
+
+char* white = "○";
+char* black = "●";
 
 char menuOfDebug[][512] = {"更改随机数方式","进行游戏","退出菜单"};
 int numOfDebugMenu = 3;
@@ -40,6 +55,46 @@ int methodOfEndingMenu = 0;
 *函数区
 *************************************
 */
+
+/*
+*函数名	:	creatPanel
+*参数	:	无
+*作用	:	创建一个棋盘数组
+*/
+int creatPanel(void) {
+	int i = 0,j = 0;
+	for(i = 0;i < height;i++) {
+		chessPanel[0][i] = "  ";
+	}
+	for(i = 0;i < width;i++) {
+		chessPanel[i][0] = "  ";
+	}
+	//四周留空白，以便棋子完整显示，且坐标无需进行运算
+	for(i = 1;i < height;i++) {
+		for(j = 1;j < width;j++) {
+			chessPanel[i][j] = "+ ";
+		}
+	}
+	return 0;
+}
+
+/*
+*函数名	:	printPanel
+*参数	:	无
+*作用	:	输出棋盘
+*/
+int printPanel(void) {
+	int i = 0,j = 0;
+	for(i = 0;i < height;i++) {
+          for(j = 0;j < width;j++) {
+              printf("%s",chessPanel[j][i]);
+          }
+          printf("\n");
+      }
+	return 0;
+}
+
+
 /*
 *函数名	:	creatMenu
 *参数	:	menu	:	菜单文字
@@ -56,7 +111,7 @@ int creatMenu(char menu[][512],int numOfChar,int method,char devider) {
 			case 0:{printf("%d.%s\n",i+1,menu[i]);break;}
 			case 1:{printf("%d%c%s\n",i+1,devider,menu[i]);break;}
 			case 2:{printf("%s\n",menu[i]);break;}
-			default :{printf("METHOD IS ERROR!");}
+			default :{printf("METHOD IS ERROR!");return 0;}
 		}
 	}
 	return 0;
@@ -78,8 +133,26 @@ int debug(void) {
 *参数	:	无
 *作用	:	开始游戏，进行初始化，并应用程序逻辑
 */
-int startGame() {
-
+int startGame(void) {
+	int x=9,y=9;
+	char i = 'n';
+	creatPanel();
+	system(cls);
+	while(1) {
+		system(cls);
+		printPanel();
+		printf("棋盘大小：%d X %d\n",width,height);
+		printf("退出游戏请输入棋盘之外坐标即可\n");
+		printf("请输入坐标(格式：x,y)：\n");
+		scanf("%d,%d",&x,&y);
+		if(x > width || y > height) {
+			printf("检测到数组越界，是否退出游戏？[y/n]:");
+			scanf("%c",&i);
+			if(i == 'y' || i == 'Y') return 0;
+			else continue;
+		}else chessPanel[x][y] = black;
+		
+	}
 	return 0;
 }
 
@@ -88,7 +161,7 @@ int startGame() {
 *参数	:	无
 *作用	:	设置
 */
-int setting() {
+int setting(void) {
 
 	return 0;
 }
