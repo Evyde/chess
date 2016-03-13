@@ -31,7 +31,7 @@ char* chessPanel[width][height];
 
 char* white = "○";
 char* black = "●";
-int chessPlot[(width-2)*(height-2)][2];
+int chessPlot[width-2][height-2];
 
 char menuOfDebug[][512] = {"更改随机数方式","进行游戏","退出菜单"};
 int numOfDebugMenu = 3;
@@ -131,16 +131,48 @@ int exitGame(void) {
 /*
 *函数名	:	isVictory
 *参数	:	numOfChess	:	棋子代码，代表黑棋和白棋
-						0	:	黑棋
-						1	:	白棋
+						1	:	黑棋
+						2	:	白棋
+			x	:	用户下棋X坐标
+			y	:	用户下棋Y坐标
 *作用	:	判断是否胜利，胜利返回1，否则返回0
 */
-int isVictory(int numOfChess) {
-	char* chess;
-	if(numOfChess == 0) chess = black;
-	else chess = white;
+int isVictory(int numOfChess,int x,int y) {
+	int chess,i = 0,j = 0,totalChess = 1;
+	chess = numOfChess;
 	//开始判断
-	
+	/*
+	算法逻辑说明：
+		五子棋，即五个棋子连在一起即可，所以需要判断横向、竖向、以及斜线，总共四次
+		可以用以下方式：
+			例如横向，以当前棋子为中心点，向左统计相同棋子个数，向右统计相同棋子个数，如果和大于等于5，就判定胜利。
+		其它方向以此类推。
+	*/
+	//横向
+	for(i = x-1;i > 0;i--) {
+		if(chessPlot[i][y] == chess) totalChess++;
+		else break;
+	}
+	for(i = x+1;i < (width - 2);i++) {
+		if(chessPlot[i][y] == chess) totalChess++;
+		else break;
+	}
+	if(totlaChess >= 5) return 1;
+	totalChess = 1;
+	//纵向
+	for(i = y-1;i > 0;i--) {
+		if(chessPlot[x][i] == chess) totalChess++;
+		else break;
+	}
+	for(i = y+1;i < (height-2);i++) {
+		if(chessPlot[x][i] == chess) totalChess++;
+		else break;
+	}
+	if(totalChess >= 5) return 1;
+	totalChess = 1;
+	//左上到右下方向
+	//左上
+	for(i = )
 }
 
 /*
@@ -150,7 +182,7 @@ int isVictory(int numOfChess) {
 *说明	:	电脑下棋，在用户棋子周围3格内下棋
 */
 int AIPlot(int x,int y) {
-	srand(time(0));
+	//srand(time(0));
 	
 	return 0;
 }
@@ -194,8 +226,7 @@ int startGame(void) {
 			}
 			else continue;
 		}else 
-		chessPlot[a][0] = x+1;
-		chessPlot[a][1] = y+1;
+		chessPlot[x][y] = 0;//0代表黑棋
 		isVictory(0);
 		AIPlot(x,y);
 		isVictory(1);
