@@ -13,8 +13,8 @@
 *宏定义区
 ************************************
 */
-#define width 21
-#define height 21
+#define width 22
+#define height 22
 /*
 ************************************
 */
@@ -31,6 +31,7 @@ char* chessPanel[width][height];
 
 char* white = "○";
 char* black = "●";
+int chessPlot[(width-2)*(height-2)][2];
 
 char menuOfDebug[][512] = {"更改随机数方式","进行游戏","退出菜单"};
 int numOfDebugMenu = 3;
@@ -69,7 +70,7 @@ int creatPanel(void) {
 	for(i = 0;i < width;i++) {
 		chessPanel[i][0] = "  ";
 	}
-	//四周留空白，以便棋子完整显示，且坐标无需进行运算
+	//四周留空白，以便棋子完整显示
 	for(i = 1;i < height;i++) {
 		for(j = 1;j < width;j++) {
 			chessPanel[i][j] = "+ ";
@@ -87,7 +88,7 @@ int printPanel(void) {
 	int i = 0,j = 0;
 	for(i = 0;i < height;i++) {
           for(j = 0;j < width;j++) {
-              printf("%s",chessPanel[j][i]);
+              printf("%s\t",chessPanel[j][i]);
           }
           printf("\n");
       }
@@ -118,6 +119,43 @@ int creatMenu(char menu[][512],int numOfChar,int method,char devider) {
 }
 
 /*
+*函数名	:	exitGame
+*参数	:	无
+*作用	:	游戏结束后调用，重置变量
+*/
+int exitGame(void) {
+
+	return 0;
+}
+
+/*
+*函数名	:	isVictory
+*参数	:	numOfChess	:	棋子代码，代表黑棋和白棋
+						0	:	黑棋
+						1	:	白棋
+*作用	:	判断是否胜利，胜利返回1，否则返回0
+*/
+int isVictory(int numOfChess) {
+	char* chess;
+	if(numOfChess == 0) chess = black;
+	else chess = white;
+	//开始判断
+	
+}
+
+/*
+*函数名	:	AIPlot
+*参数	:	x	:	用户下的X坐标
+			y	:	用户下的Y坐标
+*说明	:	电脑下棋，在用户棋子周围3格内下棋
+*/
+int AIPlot(int x,int y) {
+	srand(time(0));
+	
+	return 0;
+}
+
+/*
 *函数名	:	debug
 *参数	:	无
 *作用	:	调试程序
@@ -134,23 +172,34 @@ int debug(void) {
 *作用	:	开始游戏，进行初始化，并应用程序逻辑
 */
 int startGame(void) {
-	int x=9,y=9;
+	int x = 9,y = 9,a = 0;
 	char i = 'n';
 	creatPanel();
 	system(cls);
 	while(1) {
 		system(cls);
 		printPanel();
-		printf("棋盘大小：%d X %d\n",width,height);
+		printf("棋盘大小：%d X %d\n",width-2,height-2);
 		printf("退出游戏请输入棋盘之外坐标即可\n");
 		printf("请输入坐标(格式：x,y)：\n");
 		scanf("%d,%d",&x,&y);
-		if(x > width || y > height) {
+		system(cls);
+		if(x > (width - 2) || y > (height - 2)) {
+			system(cls);
 			printf("检测到数组越界，是否退出游戏？[y/n]:");
 			scanf("%c",&i);
-			if(i == 'y' || i == 'Y') return 0;
+			if(i == 'y' || i == 'Y') {
+				exitGame();
+				return 0;
+			}
 			else continue;
-		}else chessPanel[x][y] = black;
+		}else 
+		chessPlot[a][0] = x+1;
+		chessPlot[a][1] = y+1;
+		isVictory(0);
+		AIPlot(x,y);
+		isVictory(1);
+		chessPanel[x+1][y+1] = black;
 		
 	}
 	return 0;
